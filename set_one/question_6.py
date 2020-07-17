@@ -40,8 +40,8 @@ def main():
     key_2_ciphertext_blocks = split_ciphertext_by_key_length(decoded_lines, potential_key_size_2)
     key_3_ciphertext_blocks = split_ciphertext_by_key_length(decoded_lines, potential_key_size_3)
     
-    print(len(key_1_ciphertext_blocks))
-    print("key_size: {} ciphertext_blocks: {}"  .format(potential_key_size_1, key_1_ciphertext_blocks[:10]))
+    #print(len(key_1_ciphertext_blocks))
+    #print("key_size: {} ciphertext_blocks: {}"  .format(potential_key_size_1, key_1_ciphertext_blocks[:10]))
     # print("key_size: {} ciphertext_blocks: {}"  .format(potential_key_size_2, key_2_ciphertext_blocks[:3]))
     # print("key_size: {} ciphertext_blocks: {}"  .format(potential_key_size_3, key_3_ciphertext_blocks[:3]))
    
@@ -51,8 +51,59 @@ def main():
     key_3_ciphertext_blocks_transpose = transpose_block(key_3_ciphertext_blocks, potential_key_size_3)
 
 
-def bxor(a,b):
+    #key size = 5
+    key_1_character_frequency_table = {
+        "0" :{
+            "character" : "",
+            "frequency" : 0
+        },
+        "1" :{
+            "character" : "",
+            "frequency" : 0
+        },
+        "2" :{
+            "character" : "",
+            "frequency" : 0
+        },
+        "3" :{
+            "character" : "",
+            "frequency" : 0
+        },
+        "4" :{
+            "character" : "",
+            "frequency" : 0
+        }
+    }
     
+    #XOR the transposed blocks
+    block_number = 0
+    for ciphertext_block in key_1_ciphertext_blocks_transpose:
+        for key in range(0,256):
+            keystream = bytes([key]) * len(ciphertext_block)
+            xor_block_and_populate_frequency_table(ciphertext_block, keystream, key_1_character_frequency_table, block_number)
+        block_number += 1
+    #print(key_1_character_frequency_table)
+
+#TODO: something is wrong here. I can't tell 
+def xor_block_and_populate_frequency_table(block, keystream, frequency_table, block_number):
+
+    
+    array = [0] * 256
+    for x, y in zip(block, keystream):
+        result = x ^ y
+        array[result] += 1
+    
+    print(frequency_table["0"]["character"])
+    max_value = max(array)
+    frequency_table[str(block_number)]["character"] = str(chr(array.index(max_value)))
+    frequency_table[str(block_number)]["frequency"] = max_value
+    
+
+
+
+
+
+        
 
     
 def transpose_block(ciphertext_blocks, key_size):
@@ -75,7 +126,7 @@ def split_ciphertext_by_key_length(decoded_lines, key_length):
     ciphertext_block = bytearray()
     
     remaining_bytes_to_take = key_length
-    print(len(ciphertext_block))
+    
 
     for line in decoded_lines:
         for byte in line:
