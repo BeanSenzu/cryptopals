@@ -84,6 +84,54 @@ def main():
         block_number += 1
     #print(key_1_character_frequency_table)
 
+    #key size = 3
+    key_2_character_frequency_table = {
+        "0" :{
+            "character" : "",
+            "frequency" : 0
+        },
+        "1" :{
+            "character" : "",
+            "frequency" : 0
+        },
+        "2" :{
+            "character" : "",
+            "frequency" : 0
+        }
+    }
+
+    block_number = 0
+    for ciphertext_block in key_2_ciphertext_blocks_transpose:
+        for key in range(0,256):
+            keystream = bytes([key]) * len(ciphertext_block)
+            xor_block_and_populate_frequency_table(ciphertext_block, keystream, key_2_character_frequency_table, block_number)
+        block_number += 1
+    #print(key_2_character_frequency_table)
+
+    #key size = 2
+    key_3_character_frequency_table = {
+        "0" :{
+            "character" : "",
+            "frequency" : 0
+        },
+        "1" :{
+            "character" : "",
+            "frequency" : 0
+        }
+    }
+
+    block_number = 0
+    for ciphertext_block in key_3_ciphertext_blocks_transpose:
+        for key in range(0,256):
+            keystream = bytes([key]) * len(ciphertext_block)
+            xor_block_and_populate_frequency_table(ciphertext_block, keystream, key_3_character_frequency_table, block_number)
+        block_number += 1
+    #print(key_3_character_frequency_table)
+
+
+
+
+
 #TODO: something is wrong here. I can't tell 
 def xor_block_and_populate_frequency_table(block, keystream, frequency_table, block_number):
 
@@ -93,20 +141,13 @@ def xor_block_and_populate_frequency_table(block, keystream, frequency_table, bl
         result = x ^ y
         array[result] += 1
     
-    print(frequency_table["0"]["character"])
     max_value = max(array)
     frequency_table[str(block_number)]["character"] = str(chr(array.index(max_value)))
     frequency_table[str(block_number)]["frequency"] = max_value
-    
 
-
-
-
-
-        
-
-    
+#TODO: this might be causing issues       
 def transpose_block(ciphertext_blocks, key_size):
+    
     ciphertext_blocks_transpose = [[]] * key_size
 
     for i in range(0,len(ciphertext_blocks)):
@@ -117,7 +158,7 @@ def transpose_block(ciphertext_blocks, key_size):
                 ciphertext_blocks_transpose[j].append(ciphertext_block[j])
             else:
                 ciphertext_blocks_transpose[j].append(ciphertext_block[j])
-
+    print(len(ciphertext_blocks_transpose[1]))
     return ciphertext_blocks_transpose
 
 def split_ciphertext_by_key_length(decoded_lines, key_length):
